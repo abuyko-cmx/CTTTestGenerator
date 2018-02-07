@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Test xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" description="Записи в TBD есть. Филиал не указан." name="TC_NN" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/testSettings.xsd">
+	
+	<CreateMap variable="MapOfParams"/>
+	
+	<AddValueToMap key="test_case" map="MapOfParams" value="TC_NN"/>
+	<AddValueToMap key="tc_type" map="MapOfParams" value="Positive"/>
+	<AddValueToMap key="db_error_code" map="MapOfParams" value=""/>
+	<AddValueToMap key="db_error_type" map="MapOfParams" value=""/>
+	<AddValueToMap key="message_error_type" map="MapOfParams" value=""/>
+	<AddValueToMap key="filial" map="MapOfParams" value=""/>
+	<AddValueToMap key="have_isMigrate" map="MapOfParams" value=""/>
+	<AddValueToMap key="have_cft" map="MapOfParams" value=""/>
+	<AddValueToMap key="have_cif" map="MapOfParams" value=""/>
+	<AddValueToMap key="have_bq" map="MapOfParams" value=""/>
+	<AddValueToMap key="client_id" map="MapOfParams" value=""/>
+	<AddValueToMap key="SystemId" map="MapOfParams" value=""/>
+
+	
+	<RunTest workpath="Tests\Functions\Main"> 
+		<inputParams>
+			<variable name="MapOfParams"/>
+		</inputParams>
+	</RunTest>
+	
+</Test>
