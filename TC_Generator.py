@@ -36,7 +36,7 @@ except:
 # Загружаем глобальные данные
 sheet_1 = TestCases_book.sheet_by_name('Positive')
 TC_vals_positive = [sheet_1.row_values(rownum) for rownum in range(sheet_1.nrows)] #получаем список значений из всех записей
-ServiceNumber = TC_vals_positive[0][0] # номер сервиса.
+ServiceNumber = str(int(TC_vals_positive[0][0])) # номер сервиса.
 ServiceName = TC_vals_positive[0][1] # имя сервиса
 SystemName = TC_vals_positive[0][2] # имя системы (BPM/APP/CRM)
 
@@ -129,6 +129,7 @@ if NeedSettings:
      #TODO сделать склейку двух словарей
     prmList  = [ServiceNumber, ServiceName, SystemName]
     prmToChange = dict(zip(GC.settingsPatternList, prmList))
+    print(prmToChange)
     GC.changeWrighteSettings(settings_path, new_settings, prmToChange)
 #####################################################
 # Добавить stubs 

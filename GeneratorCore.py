@@ -160,19 +160,25 @@ def makeTCprms(templatePath, new_templatePath, TC_name, TC_type, description, pa
     tree.write(new_templatePath, 'utf-8', True)
     
     # make pritty
-    with open(new_templatePath, 'r') as f:
-        text = f.read()
-    with open(new_templatePath, 'w') as file:
+    with open(new_templatePath, 'r') as tmpFile:
+        text = tmpFile.read()
+    with open(new_templatePath, 'w') as prittyFile:
         for line in text.splitlines():
             line += '\n'
-            if line == '  <CreateMap variable="MapOfParams" />\n':
-                file.write('\n  <CreateMap variable="MapOfParams" />\n\n')
-            elif line == '  <RunTest workpath="Tests\Functions\Main">\n':
-                file.write('\n  <RunTest workpath="Tests\Functions\Main">\n')
-            elif line == '  </RunTest>\n':
-                file.write('  </RunTest>\n\n')
+            if '<Test xmlns' in line:
+                line += '\n'
+                prittyFile.write(line)
+            elif '<CreateMap' in line:
+                line += '\n'
+                prittyFile.write(line)
+            elif '<RunTest workpath' in line:
+                line = '\n' + line
+                prittyFile.write(line)
+            elif '</RunTest>' in line:
+                line += '\n'
+                prittyFile.write(line)
             else:
-                file.write(line)
+                prittyFile.write(line)
 
 
 # Заменяем значения в файле глобальных настроек
