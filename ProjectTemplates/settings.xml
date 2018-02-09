@@ -8,22 +8,22 @@
 
 	<PutVariable name="ROUTERMODULE_INPUT_QUEUE_" value="ROUTERMODULE_INPUT_QUEUE" />
 	<PutVariable name="ESB_TO_SYS_QUEUE_" value="ESB_TO_APP_QUEUE_TEST" /> <!--	Заполнить выходную очередь  -->
-	<PutVariable name="ESB_2_BIS_ENTRY_" value="ESB_2_BIS_ENTRY_???" />
-	<PutVariable name="ESB_TO_CIF_ADAPTER_QUEUE_" value = "ESB_TO_CIFLE_ADAPTER_QUEUE_???"/>
-	<PutVariable name="ESB_2_SYS2_ADAPTER_QUEUE_" value="ESB_2_SYS2_ADAPTER_QUEUE_???" />
+	<PutVariable name="ESB_2_BIS_ENTRY_" value="ESB_2_BIS_ENTRY_№№servNum№№" />
+	<PutVariable name="ESB_TO_CIF_ADAPTER_QUEUE_" value = "ESB_TO_CIFLE_ADAPTER_QUEUE_№№servNum№№"/>
+	<PutVariable name="ESB_2_SYS2_ADAPTER_QUEUE_" value="ESB_2_SYS2_ADAPTER_QUEUE_№№servNum№№" />
 <!--	Очередь для таблицы соответствия  -->
-	<PutVariable name="ESB_2_TC_ADAPTER_QUEUE" value="ESB_2_TC_ADAPTER_QUEUE_???" />
+	<PutVariable name="ESB_2_TC_ADAPTER_QUEUE" value="ESB_2_TC_ADAPTER_QUEUE_№№servNum№№" />
 
-	<PutVariable name="CACHE_" value="IIB.???.CACHE" />	<!-- Заполнить очередь для config  -->
-	<PutVariable name="CONTROL_" value="IIB.???.CONTROL" />
-	<PutVariable name="CONTROL2_" value="IIB.???.CONTROL2" />
+	<PutVariable name="CACHE_" value="IIB.№№servNum№№.CACHE" />	<!-- Заполнить очередь для config  -->
+	<PutVariable name="CONTROL_" value="IIB.№№servNum№№.CONTROL" />
+	<PutVariable name="CONTROL2_" value="IIB.№№servNum№№.CONTROL2" />
 
 	<PutVariable name="common_manager" value="EXTERNAL_ROUTERQM" />
 	<PutVariable name="cache_manager" value="ACTIVE_BRK_LOCAL" />
 	<!--очереди для dev-properies -->
 
-	<PutVariable name="composite_name" value="???" /> <!-- Заполнить имя сервиса  -->
-	<PutVariable name="source_sys" value="???" /> <!-- Заполнить вашу систему  -->
+	<PutVariable name="composite_name" value="@@servName@@" /> <!-- Заполнить имя сервиса  -->
+	<PutVariable name="source_sys" value="##sysName##" /> <!-- Заполнить вашу систему  -->
 
 	<Resources>
 

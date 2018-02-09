@@ -125,7 +125,11 @@ if NeedConfigAndXMnem:
 #####################################################
 # Добавить settings
 if NeedSettings:
-    shutil.copy(settings_path, Project_path + 'Settings\\' + ServiceName + '.xml')
+    new_settings = Project_path + 'Settings\\' + ServiceName + '.xml'
+     #TODO сделать склейку двух словарей
+    prmList  = [ServiceNumber, ServiceName, SystemName]
+    prmToChange = dict(zip(GC.settingsPatternList, prmList))
+    GC.changeWrighteSettings(settings_path, new_settings, prmToChange)
 #####################################################
 # Добавить stubs 
 if NeedStubs: 

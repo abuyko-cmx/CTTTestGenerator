@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/scripts.xsd" name="Positive" description="" globalSettingsFile="Settings/GetLinkedAccountsComposite.xml">
+<TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/scripts.xsd" name="" description="" globalSettingsFile="Settings/GetLinkedAccountsComposite.xml">
   <TestCase description="Change config" name="LoadConfigFile" toRun="false"> 
     <workpath>/Tests/Functions/LoadConfigFile</workpath> 
   </TestCase>

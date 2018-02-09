@@ -23,16 +23,22 @@ param_element_dictionary = {'TC':'have_corr_table',
                             'CFT':'have_cft', 
                             'filial':'filial', 
                             'client_id':'client_id', 
-                            'only_open':'only_open',
-                            'SystemId':'SystemId',
-                            'operating_date':'operating_date',
                             'agreement_id':'agreement_id',
+                            'SystemId':'SystemId',
+                            'partyUid':'partyUid',
+                            'only_open':'only_open',
+                            'operating_date':'operating_date',
+                            'begin_date':'begin_date',
+                            'end_date':'end_date',
+                            'personId_or_partyUid_for_req':'personId_or_partyUid_for_req',
                             'source_object_type':'source_object_type',
+                            'to_branch':'to_branch',
                             'db_error_code':'db_error_code',
                             'db_error_text':'db_error_text',
+                            'db_error_type':'db_error_type',
                             'message_error_type':'message_error_type',
-                            'tc_error_text':'tc_error_text'} # словарь параметров (значение из excel) : (значение в тесте)
-
+                            'tc_error_text':'tc_error_text'} # словарь параметр`ов (значение из excel) : (значение в тесте)
+settingsPatternList = [r'№№servNum№№', r'@@servName@@', r'##sysName##']
 Templates_dir = 'ProjectTemplates\\'
 
 TC_tmlt_xml_name = Templates_dir + 'TC_template.xml'
@@ -116,11 +122,13 @@ def makeTCprms(templatePath, new_templatePath, TC_name, TC_type, description, pa
     root = tree.getroot()
     root.attrib['name'] = TC_name
     root.attrib['description'] = description
+    root.text = '\n\n'
     
     new_element = ET.Element('CreateMap')
     new_element.set('variable', "MapOfParams")
     root.append(new_element)
-
+    new_element.tail = '\n\n'
+    
     new_element = ET.Element('AddValueToMap')
     new_element.set('key', "test_case")
     new_element.set('map', 'MapOfParams')
@@ -140,12 +148,41 @@ def makeTCprms(templatePath, new_templatePath, TC_name, TC_type, description, pa
         new_element.set('map', 'MapOfParams')
         new_element.set('value', value)
         root.append(new_element)
-        
+    new_element.tail = '\n\n'
     RunTest_element = ET.Element('RunTest')
     RunTest_element.set('workpath', "Tests\Functions\Main")
     inputParams_element = ET.SubElement(RunTest_element, 'inputParams')
     variable_element = ET.SubElement(inputParams_element, 'variable')
     variable_element.set('name',"MapOfParams")
+    RunTest_element.tail = '\r\n'
     root.append(RunTest_element)
     indent(root)
     tree.write(new_templatePath, 'utf-8', True)
+    
+    # make pritty
+    with open(new_templatePath, 'r') as f:
+        text = f.read()
+    with open(new_templatePath, 'w') as file:
+        for line in text.splitlines():
+            line += '\n'
+            if line == '  <CreateMap variable="MapOfParams" />\n':
+                file.write('\n  <CreateMap variable="MapOfParams" />\n\n')
+            elif line == '  <RunTest workpath="Tests\Functions\Main">\n':
+                file.write('\n  <RunTest workpath="Tests\Functions\Main">\n')
+            elif line == '  </RunTest>\n':
+                file.write('  </RunTest>\n\n')
+            else:
+                file.write(line)
+
+
+# Заменяем значения в файле глобальных настроек
+def changeWrighteSettings(sgPath, newSettings, patternDictionary):
+    oldSettings = open(sgPath, mode="r", encoding='utf-8', newline='')
+    nwSgs = open(newSettings, mode="w", encoding='utf-8', newline='')
+    for line in oldSettings:
+        s=line
+        for oldVal, newVal in patternDictionary.items():
+            s = s.replace(oldVal, newVal)
+        nwSgs.write(s)
+    oldSettings.close()
+    nwSgs.close()
