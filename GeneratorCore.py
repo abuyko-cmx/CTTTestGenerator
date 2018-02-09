@@ -3,7 +3,9 @@ import GeneratorConfig as GConfig
 import xml.etree.cElementTree as ET
 ############################################################################################
 ############################################################################################
-Project_path = GConfig.Project_path
+Project_path = GConfig.Project_root + 'test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
+Project_root = GConfig.Project_root
+# Project_path = GConfig.Project_path
 TestCases_book_name = GConfig.TestCases_book_name
 
 NeedTestsAndSute = GConfig.NeedTestsAndSute
@@ -50,6 +52,8 @@ cif_stub_name = 'cif_stub.xml'
 corr_table_stub_name = 'corr_table_stub.xml'
 IsMigrate_stub_name = 'IsMigrate_stub.xml'
 
+
+
 ############################################################################################
 ############################################################################################
 # возвращает имена TC
@@ -70,7 +74,8 @@ def projectDirGenerator(Prjct_path, dir_list, Svc_Name, T_type):
             if ctt_dir != 'Settings':
                 os.makedirs(Prjct_path + ctt_dir + '\\' + Svc_Name)
         except:
-            print("-------Didn't generate all dir:" + Prjct_path + ctt_dir + '\\' + Svc_Name)
+            pass
+            #print("Didn't generate all dir:" + Prjct_path + ctt_dir + '\\' + Svc_Name)
         if ctt_dir is 'Tests':
             try:
                 os.makedirs(Project_path + "Tests\\" + Svc_Name + '\\' + T_type)

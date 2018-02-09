@@ -55,7 +55,7 @@ for Test_type in GC.Test_types: # Positive + Negative
     Test = TC_template.getroot()
     TS_template = ET.parse(TS_tmlt_xml)
     Sute = TS_template.getroot()
-    print("---------------------------------------------------", Test_type)
+    print("-------------------------{0}--------------------------".format(Test_type))
     GC.projectDirGenerator(Project_path, CTT_dir_list, ServiceName, Test_type)
     param_element_list = 0
     param_element_list = GC.getParamList(TC_vals[1], param_element_dict)
@@ -73,8 +73,10 @@ for Test_type in GC.Test_types: # Positive + Negative
         try:
             os.makedirs(TC_xml_path)
             GC.makeTCprms(TC_tmlt_xml_path, TC_xml_path + '\\settings.xml', TC_name, Test_type, description, parameters)
+            print("--Generated: ", TC_name)
         except:
-            print("-------Didn't generate dir:" + Test_type)
+            #print("-------Didn't generate dir:" + Test_type)
+            pass
         
 
 
@@ -95,10 +97,11 @@ for Test_type in GC.Test_types: # Positive + Negative
         try:
             os.makedirs(Project_path + 'Suits\\' + ServiceName)
         except:
-            print("-------Didn't generate dir:" + Test_type)
+            #print("-------Didn't generate dir:" + Test_type)
+            pass
         GC.indent(Sute)
         TS_template.write(Project_path + 'Suits\\' + ServiceName + '\\' + Test_type + '.xml', 'utf-8', True)
-    print("ServiceName============================= ",ServiceName)
+    print("Generated Sute============================= ",Test_type)
     TC_tmlt_xml.close()
     TS_tmlt_xml.close()
 #####################################################
@@ -115,13 +118,28 @@ if NeedTemplates:
         Empty_element = ET.Element(ServiceName + 'Resp')
         Empty_tree = ET.ElementTree(Empty_element)
         Empty_tree.write(Project_path + 'Templates\\' + ServiceName + '\\Positive\\resp_io'+ '\\'+ TC_name + '.xml', 'utf-8', True)
+    print("--------Generated empty Templates.")
 #####################################################
 # Добавить файлы config и XMnemonics
 if NeedConfigAndXMnem:
-    Empty_element = ET.Element('config')
-    Empty_tree = ET.ElementTree(Empty_element)
-    Empty_tree.write(Project_path + 'Templates\\' + ServiceName + '\\Common\\config.xml', 'utf-8', True)
+    
+    try:
+        Config_path = GC.Project_root + 'src\\' + ServiceName + '\\resources\\settings\\' 
+        for conf in os.listdir(Config_path):
+            if 'settings' in conf.lower() or 'config' in conf.lower():
+                Config_name = Config_path + conf
+
+        #Config_name = Config_path + ServiceName + '_Settings.xml' # TODO сделать пофайловый поиск
+        shutil.copy(Config_name, Project_path + 'Templates\\' + ServiceName + '\\Common\\config.xml')
+        print("++++++++++Generated FULL CONFIG!!!.")
+    except:
+        Empty_element = ET.Element('config')
+        Empty_tree = ET.ElementTree(Empty_element)
+        Empty_tree.write(Project_path + 'Templates\\' + ServiceName + '\\Common\\config.xml', 'utf-8', True)
+        print("--------Generate empty Config.")
+    
     open(Project_path + 'Mnemonics\\Xpath\\' + ServiceName + '\\XMnemonics', 'tw', encoding='utf-8').write("filial = //*[local-name()='FilialId']/*[local-name()='ObjectId']")
+    print("--------Generated empty XPath.")
 #####################################################
 # Добавить settings
 if NeedSettings:
@@ -131,11 +149,13 @@ if NeedSettings:
     prmToChange = dict(zip(GC.settingsPatternList, prmList))
     print(prmToChange)
     GC.changeWrighteSettings(settings_path, new_settings, prmToChange)
+    print("--------Generated raw Settings.")
 #####################################################
 # Добавить stubs 
 if NeedStubs: 
     for stub_name in stub_path_list:
         shutil.copy(GC.Templates_dir + stub_name, Project_path + 'Stubs\\' + ServiceName + '\\' + stub_name)
+    print("--------Added all Stubs.")
 
 
 time.sleep(3)

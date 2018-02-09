@@ -1,6 +1,7 @@
-#Project_path = 'C:\\Users\\abuyko\\Documents\\nabs-services\\test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
-Project_path = 'CTT_Project\\' # для локального создания файлов
-TestCases_book_name = 'C:\\Users\\abuyko\\Desktop\\TestCases_140.xls' # путь до файла (excel) с тест-кейсами
+Project_root = 'C:\\Users\\abuyko\\Documents\\nabs-services\\'
+TestCases_book_name = 'C:\\Users\\user\\Documents\\Test_Cases\\TestCases_164_v.0.0.2.xls' # путь до файла (excel) с тест-кейсами
+
+#Project_path = 'CTT_Project\\' # для локального создания файлов # в конце должен быть \\
 
 
 ############################################################################################
