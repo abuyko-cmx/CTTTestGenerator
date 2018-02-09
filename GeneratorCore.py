@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import GeneratorConfig as GConfig
-
+import xml.etree.cElementTree as ET
 ############################################################################################
 ############################################################################################
 Project_path = GConfig.Project_path
@@ -23,11 +23,11 @@ param_element_dictionary = {'TC':'have_corr_table',
                             'CFT':'have_cft', 
                             'filial':'filial', 
                             'client_id':'client_id', 
-                            'onlyOpen':'only_open',
+                            'only_open':'only_open',
                             'SystemId':'SystemId',
                             'operating_date':'operating_date',
                             'agreement_id':'agreement_id',
-                            'Сервис':'source_object_type',
+                            'source_object_type':'source_object_type',
                             'db_error_code':'db_error_code',
                             'db_error_text':'db_error_text',
                             'message_error_type':'message_error_type',
@@ -85,8 +85,67 @@ def getParamList(xl_prm_line, element_dict):
             paramList.append(element_dict[tc_element])
     return paramList
 
+# получает id параметра
 def GetParamInTabId(prmInTmpl, prmTblList, prmDict):  
     for keyVal in list(prmDict.keys()):
         if prmDict.get(keyVal) == prmInTmpl:
             return prmTblList.index(keyVal)
     return 'Error'
+
+# отступы в XML
+def indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+# Генератор файла тестового сценария
+# передать шаблон, куда пишем, zip(список параметров, список значений
+def makeTCprms(templatePath, new_templatePath, TC_name, TC_type, description, parameters_tuple):
+
+    tree = ET.parse(templatePath)
+    root = tree.getroot()
+    root.attrib['name'] = TC_name
+    root.attrib['description'] = description
+    
+    new_element = ET.Element('CreateMap')
+    new_element.set('variable', "MapOfParams")
+    root.append(new_element)
+
+    new_element = ET.Element('AddValueToMap')
+    new_element.set('key', "test_case")
+    new_element.set('map', 'MapOfParams')
+    new_element.set('value', TC_name)
+    root.append(new_element)
+    
+    new_element = ET.Element('AddValueToMap')
+    new_element.set('key', 'tc_type')
+    new_element.set('map', 'MapOfParams')
+    new_element.set('value', TC_type)
+    root.append(new_element)
+    
+    
+    for prmName, value in parameters_tuple: 
+        new_element = ET.Element('AddValueToMap')
+        new_element.set('key', prmName)
+        new_element.set('map', 'MapOfParams')
+        new_element.set('value', value)
+        root.append(new_element)
+        
+    RunTest_element = ET.Element('RunTest')
+    RunTest_element.set('workpath', "Tests\Functions\Main")
+    inputParams_element = ET.SubElement(RunTest_element, 'inputParams')
+    variable_element = ET.SubElement(inputParams_element, 'variable')
+    variable_element.set('name',"MapOfParams")
+    root.append(RunTest_element)
+    indent(root)
+    tree.write(new_templatePath, 'utf-8', True)

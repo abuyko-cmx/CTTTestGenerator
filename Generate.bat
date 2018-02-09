@@ -1,1 +1,1 @@
-python TC_Generator_v2.py
+python TC_Generator.py
