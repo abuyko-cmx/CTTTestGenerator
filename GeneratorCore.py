@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import GeneratorConfig as GConfig
 import xml.etree.cElementTree as ET
+import os
 ############################################################################################
 ############################################################################################
-Project_path = GConfig.Project_root + 'test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
+# Project_path = GConfig.Project_root + 'test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
 Project_root = GConfig.Project_root
-# Project_path = GConfig.Project_path
+Project_path = GConfig.Project_path
 TestCases_book_name = GConfig.TestCases_book_name
+Share_root = '\\\\portal.cinimex.ru\\docstore\\production\\sulutionList\\RSHBNABS\\'
 
 NeedTestsAndSute = GConfig.NeedTestsAndSute
 NeedTemplates = GConfig.NeedTemplates
@@ -41,7 +43,10 @@ param_element_dictionary = {'TC':'have_corr_table',
                             'message_error_type':'message_error_type',
                             'tc_error_text':'tc_error_text'} # словарь параметр`ов (значение из excel) : (значение в тесте)
 settingsPatternList = [r'№№servNum№№', r'@@servName@@', r'##sysName##']
-Templates_dir = 'ProjectTemplates\\'
+
+
+Templates_dir = Share_root + 'Documents\\Тестирование\\samples\\SamplesForGenerator\\'
+
 
 TC_tmlt_xml_name = Templates_dir + 'TC_template.xml'
 TS_tmlt_xml_name = Templates_dir + 'TS_template.xml'
@@ -56,6 +61,13 @@ IsMigrate_stub_name = 'IsMigrate_stub.xml'
 
 ############################################################################################
 ############################################################################################
+def checkDirs(directory):
+    if os.path.exists(directory): 
+        return True
+    else:
+        print ("Object "+directory+" doesn't exist.")
+        return False
+
 # возвращает имена TC
 def TC_NAME(Number, TC_type):
     if(TC_type == 'Negative'):

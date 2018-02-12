@@ -12,11 +12,18 @@ __author__ = "Alex_Buy"
 ##### download config ######
 ############################
 
+print('--------=========----------')
+print("Можете 2 раза нажать 'Enter' если хотите использовать данные из конфига.")
+Project_path = input("Введите путь до проекта(используйте '/'):\n") 
+TestCases_book_path = input("Введите путь до тест кейсов(используйте '/'):\n") 
 
-Project_path = GC.Project_path
+if Project_path == "":
+    Project_path = GC.Project_path
+if TestCases_book_path == "":
+    TestCases_book_path = GC.TestCases_book_name
+
+
 CTT_dir_list = GC.CTT_dir_list
-
-TestCases_book_path = GC.TestCases_book_name
 TC_tmlt_xml_path = GC.TC_tmlt_xml_name
 TS_tmlt_xml_path = GC.TS_tmlt_xml_name
 settings_path = GC.settings_name
@@ -29,6 +36,7 @@ NeedConfigAndXMnem = GC.NeedConfigAndXMnem
 NeedSettings = GC.NeedSettings
 NeedStubs = GC.NeedStubs
 # -------------------------------------
+
 try:#открываем файлы
     TestCases_book = xlrd.open_workbook(TestCases_book_path)
 except:
