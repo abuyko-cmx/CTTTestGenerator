@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/scripts.xsd" name="" description="" globalSettingsFile="Settings/GetLinkedAccountsComposite.xml">
+<TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/scripts.xsd" name="" description="" globalSettingsFile="Settings/GlobalSettings.xml">
+  <TestCase description="Change migration IP" name="LoadConfigFile" toRun="false"> 
+    <workpath>/Tests/Functions/IsMigHost</workpath> 
+  </TestCase>
   <TestCase description="Change config" name="LoadConfigFile" toRun="false"> 
     <workpath>/Tests/Functions/LoadConfigFile</workpath> 
   </TestCase>

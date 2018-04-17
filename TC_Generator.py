@@ -8,9 +8,9 @@ import time
 
 __author__ = "Alex_Buy"
 
-############################
-##### download config ######
-############################
+################################################
+############### download config ################
+################################################
 
 print('--------=========----------')
 print("Можете 2 раза нажать 'Enter' если хотите использовать данные из конфига.")
@@ -22,12 +22,11 @@ if Project_path == "":
 if TestCases_book_path == "":
     TestCases_book_path = GC.TestCases_book_name
 
-
 CTT_dir_list = GC.CTT_dir_list
 TC_tmlt_xml_path = GC.TC_tmlt_xml_name
 TS_tmlt_xml_path = GC.TS_tmlt_xml_name
 settings_path = GC.settings_name
-stub_path_list = [GC.bq_stub_name, GC.cft_stub_name, GC.cif_stub_name, GC.corr_table_stub_name, GC.IsMigrate_stub_name]
+stub_path_list = GC.stub_path_list
 param_element_dict = GC.param_element_dictionary
 # -------------------------------------
 NeedTestsAndSute = GC.NeedTestsAndSute
@@ -35,27 +34,30 @@ NeedTemplates = GC.NeedTemplates
 NeedConfigAndXMnem = GC.NeedConfigAndXMnem
 NeedSettings = GC.NeedSettings
 NeedStubs = GC.NeedStubs
+NeedXSD = GC.NeedXSD
 # -------------------------------------
-
-try:#открываем файлы
+#открываем файлы
+try:
     TestCases_book = xlrd.open_workbook(TestCases_book_path)
 except:
-    print('-------Open file error!')
+    print('-------Open file error!Can not open ', TestCases_book_path)
 # Загружаем глобальные данные
 sheet_1 = TestCases_book.sheet_by_name('Positive')
 TC_vals_positive = [sheet_1.row_values(rownum) for rownum in range(sheet_1.nrows)] #получаем список значений из всех записей
 ServiceNumber = str(int(TC_vals_positive[0][0])) # номер сервиса.
 ServiceName = TC_vals_positive[0][1] # имя сервиса
 SystemName = TC_vals_positive[0][2] # имя системы (BPM/APP/CRM)
-
-
+################################################
+################################################
+#############Let's Generate Tests###############
+################################################
 for Test_type in GC.Test_types: # Positive + Negative
     
     try:#открываем файлы
         TC_tmlt_xml = open(TC_tmlt_xml_path, "r")
         TS_tmlt_xml = open(TS_tmlt_xml_path, "r")
     except:
-        print('-------Open file error!')
+        print('-------Open file error! Can not open ', TC_tmlt_xml_path)
     # Загружаем данные
     sheet = TestCases_book.sheet_by_name(Test_type)
     TC_vals = [sheet.row_values(rownum) for rownum in range(sheet.nrows)] # получаем список значений из всех записей
@@ -109,7 +111,7 @@ for Test_type in GC.Test_types: # Positive + Negative
             pass
         GC.indent(Sute)
         TS_template.write(Project_path + 'Suits\\' + ServiceName + '\\' + Test_type + '.xml', 'utf-8', True)
-    print("Generated Sute============================= ",Test_type)
+    print("Generated Sute============================= ", Test_type)
     TC_tmlt_xml.close()
     TS_tmlt_xml.close()
 #####################################################
@@ -120,7 +122,7 @@ if NeedTemplates:
         os.makedirs(Project_path + "Templates\\" + ServiceName + '\\Positive\\resp_io')
         os.makedirs(Project_path + "Templates\\" + ServiceName + '\\Common')
     except:
-        print("--------Didn't generate Template dir's!")
+        print("--------Templates dir-s loading...")
     for tc_element in TC_vals_positive[2:]:
         TC_name = GC.TC_NAME(int(tc_element[0]), 'Positive')
         Empty_element = ET.Element(ServiceName + 'Resp')
@@ -129,15 +131,14 @@ if NeedTemplates:
     print("--------Generated empty Templates.")
 #####################################################
 # Добавить файлы config и XMnemonics
-if NeedConfigAndXMnem:
-    
+if NeedConfigAndXMnem: 
     try:
         Config_path = GC.Project_root + 'src\\' + ServiceName + '\\resources\\settings\\' 
         for conf in os.listdir(Config_path):
             if 'settings' in conf.lower() or 'config' in conf.lower():
                 Config_name = Config_path + conf
 
-        #Config_name = Config_path + ServiceName + '_Settings.xml' # TODO сделать пофайловый поиск
+
         shutil.copy(Config_name, Project_path + 'Templates\\' + ServiceName + '\\Common\\config.xml')
         print("++++++++++Generated FULL CONFIG!!!.")
     except:
@@ -152,7 +153,7 @@ if NeedConfigAndXMnem:
 # Добавить settings
 if NeedSettings:
     new_settings = Project_path + 'Settings\\' + ServiceName + '.xml'
-     #TODO сделать склейку двух словарей
+
     prmList  = [ServiceNumber, ServiceName, SystemName]
     prmToChange = dict(zip(GC.settingsPatternList, prmList))
     print(prmToChange)
@@ -165,5 +166,6 @@ if NeedStubs:
         shutil.copy(GC.Templates_dir + stub_name, Project_path + 'Stubs\\' + ServiceName + '\\' + stub_name)
     print("--------Added all Stubs.")
 
-
+if NeedXSD: 
+    print("--------Didn't find XSD.")
 time.sleep(3)

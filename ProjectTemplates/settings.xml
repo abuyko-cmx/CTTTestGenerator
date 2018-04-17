@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<GlobalSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	name="DefaultSettings.xml" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/globalSettings.xsd">
+<GlobalSettings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="DefaultSettings.xml" xsi:noNamespaceSchemaLocation="http://ctt.cinimex.ru/globalSettings.xsd">
 
 	<!--очереди для dev-properies -->
 	<PutVariable name="dbhost" value="rshb-01.vm.cmx.ru:5432" />
 
 	<PutVariable name="ROUTERMODULE_INPUT_QUEUE_" value="ROUTERMODULE_INPUT_QUEUE" />
-	<PutVariable name="ESB_TO_SYS_QUEUE_" value="ESB_TO_APP_QUEUE_TEST" /> <!--	Заполнить выходную очередь  -->
+	<PutVariable name="ESB_TO_SYS_QUEUE_" value="ESB_TO_##sysName##_QUEUE_TEST" /> <!--	Заполнить выходную очередь  -->
 	<PutVariable name="ESB_2_BIS_ENTRY_" value="ESB_2_BIS_ENTRY_№№servNum№№" />
 	<PutVariable name="ESB_TO_CIF_ADAPTER_QUEUE_" value = "ESB_TO_CIFLE_ADAPTER_QUEUE_№№servNum№№"/>
+	<PutVariable name="ESB_2_CIFLE_ADAPTER_QUEUE_" value="ESB_2_CIFLE_ADAPTER_QUEUE_№№servNum№№" />	
 	<PutVariable name="ESB_2_SYS2_ADAPTER_QUEUE_" value="ESB_2_SYS2_ADAPTER_QUEUE_№№servNum№№" />
-<!--	Очередь для таблицы соответствия  -->
-	<PutVariable name="ESB_2_TC_ADAPTER_QUEUE" value="ESB_2_TC_ADAPTER_QUEUE_№№servNum№№" />
 
 	<PutVariable name="CACHE_" value="IIB.№№servNum№№.CACHE" />	<!-- Заполнить очередь для config  -->
 	<PutVariable name="CONTROL_" value="IIB.№№servNum№№.CONTROL" />
@@ -23,10 +21,40 @@
 	<!--очереди для dev-properies -->
 
 	<PutVariable name="composite_name" value="@@servName@@" /> <!-- Заполнить имя сервиса  -->
-	<PutVariable name="source_sys" value="##sysName##" /> <!-- Заполнить вашу систему  -->
+	<PutVariable name="source_sys" value="##sysName##" /> 
+	<PutVariable name="object_type" value="@@servName@@" />
+	<PutVariable name="destination_sys" value="BISQUIT" />
+	<PutVariable name="transformationOn" value="false"/>
+	
+	<!-- параметры подключения к брокеру -->
+	<PutVariable name="brok_host" value="192.168.14.241"/>
+	<PutVariable name="brok_port" value="4416"/> 
+	<PutVariable name="ex_gr_name" value="@@servName@@"/>
 
+	
 	<Resources>
 
+		<!-- Для изменений параметров брокера. Первый блок у всех одинаковый. -->
+		<FlowManager operationTimeOut="5000" objName="broker"
+			brokerURL="#brok_host#" brokerVersion="10" brokerPort="#brok_port#"
+			restRequest="true"  />
+	
+		<BrokerApplication manager="broker" objName="BrokerApplication"
+			applicationName="#composite_name#" groupName="#ex_gr_name#" />
+	
+		<!-- Здесь нужны указать все потоки, где есть св-ва сервиса миграции и таблицы 
+			соответствия и один поток с МИПом -->
+	
+		<Flow
+			flowName=""
+			manager="broker" objName="IsMigflow_0" groupName="#ex_gr_name#"
+			applicationName="#composite_name#" />
+
+		<Flow
+			flowName=""
+			manager="broker" objName="IsMipflow_0" groupName="#ex_gr_name#"
+			applicationName="#composite_name#" />
+			
 		<!--Подключение к БД -->
 		<Database autoCommit="true"
 			dbUrl="jdbc:postgresql://#dbhost#/mip?user=postgres&amp;password=postgres"
@@ -38,10 +66,14 @@
 			<ccsid>1208</ccsid>
 		</QueueManager>
 
-		<QueueManager name="IIB.CSRV.MI1" host="vm-rshb-mq01"
-			port="1419" channel="SYSTEM.ADMIN.SVRCONN" objName="#cache_manager#">
-			<ccsid>1208</ccsid>
-		</QueueManager>
+		<QueueManager name="IIB.ADP.MI1" host="vm-rshb-mq01"
+   			port="1416" channel="SYSTEM.ADMIN.SVRCONN" objName="#cache_manager#">
+   			<ccsid>1208</ccsid>
+  		</QueueManager>
+<!--		<QueueManager name="IIB.CSRV.MI1" host="vm-rshb-mq01"-->
+<!--			port="1419" channel="SYSTEM.ADMIN.SVRCONN" objName="#cache_manager#">-->
+<!--			<ccsid>1208</ccsid>-->
+<!--		</QueueManager>-->
 
 		<!--очереди кэша -->
 		<Queue queue="#CACHE_#" manager="#cache_manager#" objName="CACHE" />
@@ -49,75 +81,31 @@
 		<Queue queue="#CONTROL2_#" manager="#cache_manager#" objName="CONTROL2" />
 
 		<!-- очереди перекладчика и конечной системы -->
-		<Queue queue="#ROUTERMODULE_INPUT_QUEUE_#" manager="#common_manager#"
-			objName="ROUTERMODULE_INPUT_QUEUE" />
-		<Queue queue="#ESB_TO_SYS_QUEUE_#" manager="#common_manager#"
-			objName="ESB_TO_SYS_QUEUE" />
-		<Queue queue="#ESB_2_BIS_ENTRY_#" manager="#common_manager#"
-			objName="ESB_2_BIS_ENTRY" />
-		<Queue queue="#ESB_2_SYS2_ADAPTER_QUEUE_#" manager="#common_manager#"
-			objName="ESB_2_SYS2_ADAPTER_QUEUE" />
-		<Queue queue="#ESB_TO_CIF_ADAPTER_QUEUE_#" manager="#common_manager#"
-			objName="ESB_TO_CIF_ADAPTER_QUEUE" />
+		<Queue queue="#ROUTERMODULE_INPUT_QUEUE_#" manager="#common_manager#" objName="ROUTERMODULE_INPUT_QUEUE" />
+		<Queue queue="#ESB_TO_SYS_QUEUE_#" manager="#common_manager#" objName="ESB_TO_SYS_QUEUE" />
+		<Queue queue="#ESB_2_BIS_ENTRY_#" manager="#common_manager#" objName="ESB_2_BIS_ENTRY" />
+		<Queue queue="#ESB_2_SYS2_ADAPTER_QUEUE_#" manager="#common_manager#" objName="ESB_2_SYS2_ADAPTER_QUEUE" />
+		<Queue queue="#ESB_TO_CIFLE_ADAPTER_QUEUE_#" manager="#common_manager#" objName="ESB_TO_CIFLE_ADAPTER_QUEUE" />
+		<Queue queue="#ESB_TO_CIF_ADAPTER_QUEUE_#" manager="#common_manager#" objName="ESB_TO_CIF_ADAPTER_QUEUE" />
 
 		<!-- объявление заглушек -->
 		<Stub confFile="Stubs/#composite_name#/bq_stub.xml" objName="bq_stub" />
+		<Stub confFile="Stubs/#composite_name#/cifle_stub.xml" objName="cifle_stub" />
 		<Stub confFile="Stubs/#composite_name#/cif_stub.xml" objName="cif_stub" />
-		<Stub confFile="Stubs/#composite_name#/cft_stub.xml" objName="cft_stub" />		
-		<Stub confFile="Stubs/#composite_name#/corr_table_stub.xml" objName="corr_table_stub" />
+		<Stub confFile="Stubs/#composite_name#/cft_stub.xml" objName="cft_stub" />
 		<Stub confFile="Stubs/#composite_name#/IsMigrate_stub.xml" objName="IsMigrate_stub" />
 	</Resources>
+
+	<GroovyConfiguration objName="groovy"/>
 
 	<!--библиотеки для БД -->
 	<Libraries>
 		<path>Lib/postgresql-9.4.1210.jre6.jar</path>
 	</Libraries>
-	<GroovyConfiguration objName="groovy">
-		<addToClassloader path="lib/IntegrationAPI.jar" />
-		<addToClassloader path="lib/jetty-client.jar" />
-		<addToClassloader path="lib/jetty-http.jar" />
-		<addToClassloader path="lib/jetty-io.jar" />
-		<addToClassloader path="lib/jetty-util.jar" />
-		<addToClassloader path="lib/websocket-api.jar" />
-		<addToClassloader path="lib/websocket-client.jar" />
-		<addToClassloader path="lib/websocket-common.jar" />
-	</GroovyConfiguration>
 
-	<!--    Для изменений параметров брокера. Первый блок у всех одинаковый.-->
-	<BrokerLibraries objName="broker">
-		<path>lib/IntegrationAPI.jar</path> 
-		<path>lib/jetty-client.jar</path> 
-		<path>lib/jetty-http.jar</path> 
-		<path>lib/jetty-io.jar</path> 
-		<path>lib/jetty-util.jar</path>
-		<path>lib/websocket-api.jar</path> 
-		<path>lib/websocket-client.jar</path>
-		<path>lib/websocket-common.jar</path>  
-	</BrokerLibraries> 
-	
-	 <!-- параметры подключения к брокеру -->
-	<PutVariable name="brok_host" value="10.18.122.77"/>
-	<PutVariable name="brok_port" value="4419"/>
-	<PutVariable name="ex_gr_name" value="srv_???"/>
-	
-	
-	<Security objName="brokerSec" username="mqm" password="mqm"/>
-	
-	<FlowManager operationTimeOut="5000" objName="broker" brokerURL="#brok_host#" 
-					brokerVersion="10" brokerPort="#brok_port#" restRequest="true"
-					securityObjName="brokerSec"/>
-	
-	<BrokerApplication manager="broker" objName="BrokerApplication" applicationName="#composite_name#" groupName="#ex_gr_name#"/>
-	
-	<!--    Здесь нужны указать все потоки, где есть св-ва сервиса миграции и таблицы соответствия и один поток с МИПом-->  
-	<Flow flowName="ru.cmx.rshb.composite.????????" 
-			manager="broker" objName="IsMipflow_0" groupName="#ex_gr_name#" applicationName="#composite_name#"/>
-			
-	<Flow flowName="ru.cmx.rshb.composite.????????" 
-			manager="broker" objName="IsMigflow_0" groupName="#ex_gr_name#" applicationName="#composite_name#"/>
-	
+
 	<LoadXpath path="/Mnemonics/Xpath/#composite_name#/XMnemonics" />
 	<LoadXpath path="/Mnemonics/Xpath/commonXMnemonics" />
-	<LoadXpath path="/Mnemonics/Regexp/commonRMnemonics" />
+	<LoadRegexp path="/Mnemonics/Regexp/commonRMnemonics"/>
 
 </GlobalSettings>
