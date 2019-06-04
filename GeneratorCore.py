@@ -4,8 +4,8 @@ import xml.etree.cElementTree as ET
 import os
 ############################################################################################
 ############################################################################################
-# Project_path = GConfig.Project_root + 'test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
 Project_root = GConfig.Project_root
+# Project_path = GConfig.Project_root + 'test\\integration\\RSHBNABSTestProject\\' # в конце должен быть \\
 Project_path = GConfig.Project_path
 TestCases_book_name = GConfig.TestCases_book_name
 Share_root = '\\\\portal.cinimex.ru\\docstore\\production\\sulutionList\\RSHBNABS\\'
@@ -18,18 +18,20 @@ NeedStubs = GConfig.NeedStubs
 NeedXSD = GConfig.NeedXSD
 ############################################################################################
 ############################################################################################
-CTT_dir_list = ['Mnemonics\\Xpath', 'Stubs', 'Suits', 'Templates', 'Tests', 'XSD', 'Settings'] # где генерим папку #Sute_Name#
+CTT_dir_list = ['Mnemonics\\Xpath', 'Mnemonics\\Regexp', 'Stubs', 'Suits', 'Templates', 'Tests', 'XSD', 'Settings'] # где генерим папку #Sute_Name#
 Test_types = ["Positive", "Negative"]
 param_element_dictionary = {'TC':'have_corr_table',
                             'isMigrate':'have_isMigrate',
                             'BQ':'have_bq', 
                             'CIF':'have_cif', 
                             'CIF2':'have_cif_crmml',
-    							'CIFLE':'have_cifle',
+                            'CIFLE':'have_cifle',
                             'CFT':'have_cft', 
+                            'DBOLE':'have_dbole',
+                            'DBOLE2':'have_dbole2', 
                             'filial':'filial', 
                             'client_id':'client_id',
-    							'client_type':'client_type',
+                            'client_type':'client_type',
                             'agreement_id':'agreement_id',
                             'SystemId':'SystemId',
                             'partyUid':'partyUid',
@@ -38,8 +40,8 @@ param_element_dictionary = {'TC':'have_corr_table',
                             'begin_date':'begin_date',
                             'end_date':'end_date',
                             'personId_or_partyUid_for_req':'personId_or_partyUid_for_req',
-    							'Comp_req_SystemId':'Comp_req_SystemId',
-							    'Comp_req_SystemNodeId':'Comp_req_SystemNodeId',
+                            'Comp_req_SystemId':'Comp_req_SystemId',
+                            'Comp_req_SystemNodeId':'Comp_req_SystemNodeId',
                             'source_object_type':'source_object_type',
                             'to_branch':'to_branch',
                             'db_error_code':'db_error_code',
@@ -60,9 +62,11 @@ bq_stub_name = 'bq_stub.xml'
 cft_stub_name = 'cft_stub.xml'
 cif_stub_name = 'cif_stub.xml'
 cifle_stub_name = 'cifle_stub.xml'
+dbole_stub_name = 'dbole_stub.xml'
+dbole2_stub_name = 'dbole2_stub.xml'
 corr_table_stub_name = 'corr_table_stub.xml'
 IsMigrate_stub_name = 'IsMigrate_stub.xml'
-stub_path_list = [bq_stub_name, cft_stub_name, cif_stub_name, cifle_stub_name, corr_table_stub_name, IsMigrate_stub_name]
+stub_path_list = [bq_stub_name, cft_stub_name, cif_stub_name, cifle_stub_name, dbole_stub_name, dbole2_stub_name, corr_table_stub_name, IsMigrate_stub_name]
 
 
 ############################################################################################
@@ -124,10 +128,10 @@ def GetParamInTabId(prmInTmpl, prmTblList, prmDict):
 
 # отступы в XML
 def indent(elem, level=0):
-    i = "\n" + level*"  "
+    i = "\n" + level*"    "
     if len(elem):
         if not elem.text or not elem.text.strip():
-            elem.text = i + "  "
+            elem.text = i + "    "
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
         for elem in elem:
@@ -152,6 +156,12 @@ def makeTCprms(templatePath, new_templatePath, TC_name, TC_type, description, pa
     new_element.set('variable', "MapOfParams")
     root.append(new_element)
     new_element.tail = '\n\n'
+        
+    new_element = ET.Element('AddValueToMap')
+    new_element.set('key', 'TestCase_description')
+    new_element.set('map', 'MapOfParams')
+    new_element.set('value', r'#$Test_description$#')
+    root.append(new_element)
     
     new_element = ET.Element('AddValueToMap')
     new_element.set('key', "test_case")
